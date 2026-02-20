@@ -1,5 +1,6 @@
 package study.mailapp.services;
 
+import messaging.UserEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 

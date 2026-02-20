@@ -1,4 +1,4 @@
-package study.mailapp.services;
+package messaging;
 
 public class UserEvent {
     private String eventDescription;

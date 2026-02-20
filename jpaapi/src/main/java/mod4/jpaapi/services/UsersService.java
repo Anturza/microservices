@@ -3,7 +3,7 @@ package mod4.jpaapi.services;
 import mod4.jpaapi.exceptionhandling.exceptions.NotValidUserInputException;
 import mod4.jpaapi.exceptionhandling.exceptions.UserNotFoundException;
 import mod4.jpaapi.dto.UserDTO;
-import mod4.jpaapi.messaging.UserEvent;
+import messaging.UserEvent;
 import mod4.jpaapi.messaging.UserEventProducer;
 import mod4.jpaapi.models.Name;
 import mod4.jpaapi.models.User;

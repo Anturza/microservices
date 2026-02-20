@@ -1,5 +1,6 @@
 package mod4.jpaapi.messaging;
 
+import messaging.UserEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
