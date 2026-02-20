@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>jpaapi</module>
+        <module>notif-service</module>
     </modules>
 
     <properties>
