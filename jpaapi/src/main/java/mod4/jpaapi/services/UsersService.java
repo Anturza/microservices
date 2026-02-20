@@ -70,7 +70,7 @@ public class UsersService {
 
     public ResponseEntity<Void> deleteUser(UUID id) {
         if (usersRepository.existsById(id)) {
-            UserDTO deletedUser = mapToDTO(usersRepository.findById(id).get());
+            UserDTO deletedUser = getUser(id);
             usersRepository.deleteById(id);
             UserEvent event = new UserEvent( "Здравствуйте! Ваш аккаунт на тестовом сервисе был удалён.", deletedUser.email());
             userEventProducer.sendUserEvent(event);

@@ -1,12 +1,16 @@
 package study.mailapp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+
+    @Value("${spring.mail.username}")
+    private String sendFrom;
 
     private final JavaMailSender mailSender;
 
@@ -18,12 +22,13 @@ public class EmailService {
     public void sendSimpleEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setFrom("test-mail-distribution@list.ru");
+        message.setFrom(sendFrom);
         message.setTo(toEmail);
-        message.setText(body);
         message.setSubject(subject);
+        message.setText(body);
+
 
         mailSender.send(message);
-        System.out.println("Mail sent successfully to " + toEmail);
+        System.out.printf("Mail sent successfully to: %s ", toEmail);
     }
 }
