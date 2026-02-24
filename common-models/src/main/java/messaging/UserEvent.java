@@ -1,7 +1,14 @@
 package messaging;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class UserEvent {
+
+    @NotBlank
     private String eventDescription;
+
+    @Email
     private String userEmail;
 
     public UserEvent() {

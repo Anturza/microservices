@@ -1,5 +1,8 @@
 package study.mailapp.services;
 
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -8,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     @Value("${spring.mail.username}")
     private String sendFrom;
@@ -27,8 +32,7 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(body);
 
-
         mailSender.send(message);
-        System.out.printf("Mail sent successfully to: %s ", toEmail);
+        logger.info("Mail sent successfully to: {} ", toEmail);
     }
 }
