@@ -1,7 +1,6 @@
 package mod4.jpaapi.messaging;
 
 import messaging.UserEvent;
-import mod4.jpaapi.exceptionhandling.UsersAPIExceptionHandler;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
