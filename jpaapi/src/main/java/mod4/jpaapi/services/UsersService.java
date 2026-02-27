@@ -3,7 +3,7 @@ package mod4.jpaapi.services;
 import mod4.jpaapi.exceptionhandling.exceptions.NotValidUserInputException;
 import mod4.jpaapi.exceptionhandling.exceptions.UserNotFoundException;
 import mod4.jpaapi.dto.UserDTO;
-import mod4.jpaapi.messaging.UserEvent;
+import messaging.UserEvent;
 import mod4.jpaapi.messaging.UserEventProducer;
 import mod4.jpaapi.models.Name;
 import mod4.jpaapi.models.User;
@@ -50,7 +50,7 @@ public class UsersService {
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}").buildAndExpand(createdUser.getId()).toUri();
         UserDTO createdUserDto = UsersService.mapToDTO(createdUser);
-        UserEvent event = new UserEvent( "Здравствуйте! Ваш аккаунт на тестовом сервисе был успешно создан.", createdUser.getEmail());
+        UserEvent event = new UserEvent( UserEvent.UserEventDescription.CREATED, createdUser.getEmail());
         userEventProducer.sendUserEvent(event);
         return ResponseEntity.created(location).body(createdUserDto);
     }
@@ -70,9 +70,9 @@ public class UsersService {
 
     public ResponseEntity<Void> deleteUser(UUID id) {
         if (usersRepository.existsById(id)) {
-            UserDTO deletedUser = mapToDTO(usersRepository.findById(id).get());
+            UserDTO deletedUser = getUser(id);
             usersRepository.deleteById(id);
-            UserEvent event = new UserEvent( "Здравствуйте! Ваш аккаунт на тестовом сервисе был удалён.", deletedUser.email());
+            UserEvent event = new UserEvent( UserEvent.UserEventDescription.DELETED, deletedUser.email());
             userEventProducer.sendUserEvent(event);
             return ResponseEntity.ok().build();
         } else {

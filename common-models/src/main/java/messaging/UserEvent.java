@@ -1,19 +1,24 @@
-package mod4.jpaapi.messaging;
+package messaging;
+
+import jakarta.validation.constraints.Email;
 
 public class UserEvent {
-    private String eventDescription;
+
+    private UserEventDescription eventDescription;
+
+    @Email
     private String userEmail;
 
     public UserEvent() {
 
     }
 
-    public UserEvent(String eventDescription, String userEmail) {
+    public UserEvent(UserEventDescription eventDescription, String userEmail) {
         this.eventDescription = eventDescription;
         this.userEmail = userEmail;
     }
 
-    public String getEventDescription() {
+    public UserEventDescription getEventDescription() {
         return eventDescription;
     }
 
@@ -21,11 +26,16 @@ public class UserEvent {
         return userEmail;
     }
 
-    public void setEventDescription(String eventDescription) {
+    public void setEventDescription(UserEventDescription eventDescription) {
         this.eventDescription = eventDescription;
     }
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public enum UserEventDescription {
+        CREATED,
+        DELETED
     }
 }
