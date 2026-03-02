@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+/** Entity class represents a base user with some standard fields
+ * */
 @Entity
 @Table(name = "Users")
 public class User extends UserBaseModel{
