@@ -14,9 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -48,6 +49,9 @@ class JpaApiApplicationTests {
 	LocalDate testBirthday;
 	UserDTO testUserDTO;
 	List<UserDTO> userTestList;
+	EntityModel<UserDTO> resource;
+	//After introducing HATEOAS in UsersAPI added mediatype below for support of hypermedia in tests expectations
+	private MediaType contentType = new MediaType("application", "hal+json");
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,10 +59,10 @@ class JpaApiApplicationTests {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private UsersRepository usersRepository;
 
-    @MockBean
+    @MockitoBean
     private UsersService usersService;
 
     @BeforeEach
@@ -78,6 +82,7 @@ class JpaApiApplicationTests {
         testUserExists.setCreated(LocalDateTime.now());
         testUserExists.setUpdated(LocalDateTime.now());
         testUserDTO = UsersService.mapToDTO(testUserExists);
+
     }
 
 	@Test
@@ -109,7 +114,7 @@ class JpaApiApplicationTests {
         MvcResult result = mockMvc.perform(get("/api/users/2afae0af-0a24-47da-b1a0-219995da50e4")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
+                .andExpect(content().contentType(contentType)).andReturn();
 
 		String jsonResponse = result.getResponse().getContentAsString();
 		UserDTO actualUser = objectMapper.readValue(jsonResponse, UserDTO.class);
@@ -138,9 +143,10 @@ class JpaApiApplicationTests {
 	@DisplayName("Create user test: case success")
 	public void testCreateUserEndpoint_Success() throws Exception {
 		testUserNew = getNewUser();
+		resource = EntityModel.of(UsersService.mapToDTO(testUserNew));
 
 		when(usersService.createUser(testUserNew)).thenReturn(ResponseEntity
-				.created(getLocation(testUserNew)).body(getCreatedUserDto(testUserNew)));
+				.created(getLocation(testUserNew)).body(resource));
 
 		mockMvc.perform(post("/api/users")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -203,9 +209,10 @@ class JpaApiApplicationTests {
 	@DisplayName("Update user test: case success")
 	public void testUpdateUserEndpoint_Success() throws Exception {
 		User updatedUser = getUpdatedUser();
+		resource = EntityModel.of(UsersService.mapToDTO(updatedUser));
 
 		when(usersService.updateUser(eq(testIdValid), any(User.class)))
-				.thenReturn(ResponseEntity.ok(getCreatedUserDto(updatedUser)));
+				.thenReturn(ResponseEntity.ok(resource));
 
 		MvcResult result = mockMvc.perform(put("/api/users/2afae0af-0a24-47da-b1a0-219995da50e4")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(updatedUser)))
