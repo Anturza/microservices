@@ -10,15 +10,17 @@
     <packaging>pom</packaging>
     <modules>
         <module>jpaapi</module>
-        <module>notif-service</module>
+        <module>mailapp</module>
         <module>common-models</module>
         <module>discover-server</module>
+        <module>gateway</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
 
 </project>
