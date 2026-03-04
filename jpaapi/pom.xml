@@ -9,9 +9,9 @@
 		<relativePath/>
 	</parent>
 	<groupId>home.study.micro</groupId>
-	<artifactId>jpaAPI</artifactId>
+	<artifactId>jpaapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>jpaAPI</name>
+	<name>jpaapi</name>
 	<description>Study project for Spring Boot</description>
 	<url/>
 	<licenses>

@@ -12,6 +12,7 @@
         <module>jpaapi</module>
         <module>notif-service</module>
         <module>common-models</module>
+        <module>discover-server</module>
     </modules>
 
     <properties>

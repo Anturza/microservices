@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>home.study.micro</groupId>
-	<artifactId>mailapp</artifactId>
+	<artifactId>notif-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>mailapp</name>
+	<name>notif-service</name>
 	<description>mail sender project for Spring Boot</description>
 	<url/>
 	<licenses>
