@@ -1,10 +1,15 @@
 package mod4.jpaapi.controllers;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import mod4.jpaapi.dto.UserDTO;
 import mod4.jpaapi.models.User;
 import mod4.jpaapi.repositories.UsersRepository;
 import mod4.jpaapi.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+@OpenAPIDefinition(info=@Info(title="Users API"))
+@Tag(name = "user", description = "The user API")
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -32,30 +42,40 @@ public class UsersController {
         this.usersService = usersService;
     }
 
-    @Autowired
-
-
+    @Operation(summary = "Get list of users", description = "For now (while study project) it can be done by any user", tags = { "user" })
     @GetMapping
-    public List<UserDTO> getAllUsers() {
-        return usersService.getAllUsers();
+    public List<EntityModel<UserDTO>> getAllUsers() {
+        List<UserDTO> userList = usersService.getAllUsers();
+        return userList.stream().map(user -> EntityModel.of(user,
+                linkTo(methodOn(UsersController.class).getUserById(user.id())).withSelfRel(),
+                linkTo(methodOn(UsersController.class).getAllUsers())
+                        .withRel("All users"))).collect(Collectors.toList());
     }
 
+    @Operation(summary = "Get user by id", description = "For now (while study project) it can be done by any user", tags = { "user" })
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable UUID id) {
-        return usersService.getUser(id);
+    public EntityModel<UserDTO> getUserById(@PathVariable UUID id) {
+        UserDTO user = usersService.getUser(id);
+        EntityModel<UserDTO> resource = EntityModel.of(user);
+        resource.add(linkTo(methodOn(UsersController.class).getUserById(id)).withSelfRel());
+        resource.add(linkTo(methodOn(UsersController.class).deleteUserById(id)).withRel("Delete user"));
+        resource.add(linkTo(methodOn(UsersController.class).updateUser(id, null)).withRel("Edit user details"));
+        return resource;
     }
 
+    @Operation(summary = "Create user", description = "For now (while study project) it can be done by any user", tags = { "user" })
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
+    public ResponseEntity<EntityModel<UserDTO>> createUser(@RequestBody User user) {
         return usersService.createUser(user);
-
     }
 
+    @Operation(summary = "Update user data by id", description = "For now (while study project) it can be done by any user", tags = { "user" })
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable UUID id, @RequestBody User userDetails) {
+    public ResponseEntity<EntityModel<UserDTO>> updateUser(@PathVariable UUID id, @RequestBody User userDetails) {
         return usersService.updateUser(id, userDetails);
     }
 
+    @Operation(summary = "Delete user by id", description = "For now (while study project) it can be done by any user", tags = { "user" })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable UUID id) {
         return usersService.deleteUser(id);

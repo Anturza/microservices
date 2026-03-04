@@ -2,13 +2,14 @@ package mod4.jpaapi.models;
 
 import java.util.Objects;
 import java.util.StringJoiner;
-
+/** Embedded class can be used as a combination of surname, name, patronymic for any UserBaseModel implementation.
+ * It should have at least name */
 public class Name {
-
+    /** Field of surname*/
     private String surname;
-
+    /** Field of personal name*/
     private String personalName;
-
+    /** Field of patronymic*/
     private String patronymic;
 
     public Name() {}
