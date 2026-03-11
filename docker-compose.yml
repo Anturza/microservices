@@ -6,13 +6,33 @@ services:
       context: "./server-config"
       dockerfile: Dockerfile
     ports:
-      - "8888:8888"
+      - "${CONFIGSERVER_PORT}:${CONFIGSERVER_PORT}"
     env_file:
-      - ./configserver.env
+      - ./configserver.env #contains encryption key to encode sensitive properties from fetched config
 
   discover-server:
     build:
       context: "./discover-server"
       dockerfile: Dockerfile
     ports:
-      - "8761:8761"
+      - "${EUREKA_PORT}:${EUREKA_PORT}"
+
+  kafka:
+    image: apache/kafka:4.2.0
+    ports:
+      - "${KAFKA_PORT}:${KAFKA_PORT}"
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+
+  users-service:
+    build:
+      context: "./jpaapi"
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
