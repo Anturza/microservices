@@ -47,12 +47,15 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
+    <packaging>jar</packaging>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>configserver.ConfigServerApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

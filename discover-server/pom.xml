@@ -52,7 +52,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<packaging>jar</packaging>
 	<build>
 		<plugins>
 			<plugin>
@@ -62,6 +62,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>discover_server.DiscoveryServerApplication</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
