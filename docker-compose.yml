@@ -34,5 +34,10 @@ services:
     build:
       context: "./jpaapi"
       dockerfile: Dockerfile
+
+  gateway:
+    build:
+      context: "./gateway"
+      dockerfile: Dockerfile
     ports:
-      - "8085:8085"
+      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
