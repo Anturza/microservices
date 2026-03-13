@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   server-config:
     build:
@@ -45,6 +43,11 @@ services:
   users-service:
     build:
       context: "./jpaapi"
+      dockerfile: Dockerfile
+
+  mailing-service:
+    build:
+      context: "./mailapp"
       dockerfile: Dockerfile
 
   gateway:
