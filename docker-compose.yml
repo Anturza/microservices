@@ -1,0 +1,104 @@
+services:
+  server-config:
+    build:
+      context: "./server-config"
+      dockerfile: Dockerfile
+    ports:
+      - "${CONFIGSERVER_PORT}:${CONFIGSERVER_PORT}"
+    restart: on-failure:3
+    env_file:
+      - ./configserver.env #contains encryption key to encode sensitive properties from fetched config
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -T5 -qO- http://localhost:8888/actuator/health | grep UP || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+      start_interval: 1s
+
+  discover-server:
+    build:
+      context: "./discover-server"
+      dockerfile: Dockerfile
+    ports:
+      - "${EUREKA_PORT}:${EUREKA_PORT}"
+    restart: on-failure:3
+    depends_on:
+      server-config:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -T5 -qO- http://localhost:8761/actuator/health | grep UP || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  kafka:
+    image: apache/kafka:4.2.0
+    ports:
+      - "${KAFKA_PORT}:${KAFKA_PORT}"
+    restart: on-failure:3
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_LISTENERS: 'PLAINTEXT://:${KAFKA_PORT},CONTROLLER://:${KAFKA_CONTROLLER_PORT}'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:${KAFKA_PORT}'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:${KAFKA_CONTROLLER_PORT}'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      CLUSTER_ID: '${KAFKA_CLUSTER_ID}' #hardcoded for local dev purposes
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    restart: on-failure:3
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  users-service:
+    build:
+      context: "./jpaapi"
+      dockerfile: Dockerfile
+    restart: on-failure:3
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discover-server:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  mailing-service:
+    build:
+      context: "./mailapp"
+      dockerfile: Dockerfile
+    restart: on-failure:3
+    depends_on:
+      discover-server:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  gateway:
+    build:
+      context: "./gateway"
+      dockerfile: Dockerfile
+    restart: on-failure:3
+    ports:
+      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
+    depends_on:
+      server-config:
+        condition: service_healthy
+      discover-server:
+        condition: service_healthy

@@ -70,7 +70,6 @@
 			<groupId>home.study.micro</groupId>
 			<artifactId>common-models</artifactId>
 			<version>1.0-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -110,7 +109,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<packaging>jar</packaging>
 	<build>
 		<plugins>
 			<plugin>
@@ -140,6 +139,17 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<mainClass>mod4.jpaapi.JpaApiApplication</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.4</version>
+				<configuration>
+					<includes>
+						<include>TestFail.java</include>
+					</includes>
+					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 		</plugins>

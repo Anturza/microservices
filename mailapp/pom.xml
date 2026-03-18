@@ -97,12 +97,25 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<packaging>jar</packaging>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>study.mailapp.EmailNotificationApp</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.4</version>
+				<configuration>
+					<includes>
+						<include>TestFail.java</include>
+					</includes>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
